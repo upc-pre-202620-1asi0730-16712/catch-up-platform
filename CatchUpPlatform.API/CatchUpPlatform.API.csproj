@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <Folder Include="News\Application\" />
-      <Folder Include="News\Domain\Model\Queries\" />
       <Folder Include="News\Infrastructure\" />
       <Folder Include="News\Interfaces\" />
       <Folder Include="Shared\" />

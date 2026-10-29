@@ -1,3 +1,7 @@
+using CatchUpPlatform.API.News.Application.Internal.QueryServices;
+using CatchUpPlatform.API.News.Application.Services;
+using CatchUpPlatform.API.News.Domain.Repositories;
+using CatchUpPlatform.API.News.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using CatchUpPlatform.API.Shared.Domain.Repositories;
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
@@ -30,7 +34,8 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 // Shared Bounded Context Injection Configuration
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-
+builder.Services.AddScoped<IFavoriteSourceRepository, FavoriteSourceRepository>();
+builder.Services.AddScoped<IFavoriteSourceQueryService, FavoriteSourceQueryService>();
 
 
 

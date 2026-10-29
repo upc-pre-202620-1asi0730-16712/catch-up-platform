@@ -1,8 +1,8 @@
 using CatchUpPlatform.API.News.Domain.Model.Aggregates;
 using CatchUpPlatform.API.News.Domain.Model.ValueObjects;
 using CatchUpPlatform.API.News.Domain.Repositories;
-using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EFC.Configuration;
-using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EFC.Repositories;
+using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
+using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace CatchUpPlatform.API.News.Infrastructure.Persistence.EntityFrameworkCore.Repositories;

@@ -42,6 +42,14 @@ builder.Services.AddScoped<IFavoriteSourceCommandService, FavoriteSourceCommandS
 
 var app = builder.Build();
 
+// Apply pending migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+}
+
 app.MapGet("/", () => "Hello World!");
 
 app.Run();

@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="News\Application\" />
       <Folder Include="News\Interfaces\" />
+      <Folder Include="Shared\Infrastructure\Persistence\EntityFrameworkCore\Migrations\" />
     </ItemGroup>
 
     <ItemGroup>

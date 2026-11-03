@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Localization configuration
+builder.Services.AddLocalization();
+
 // Configure Database Context and route EF logs through the app logger pipeline.
 builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 {
@@ -50,6 +53,14 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
-app.MapGet("/", () => "Hello World!");
+// Localization must run before Swagger so generated documentation follows the request culture.
+string[] supportedCultures = ["en", "en-US", "es", "es-PE" ];
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+localizationOptions.ApplyCurrentCultureToResponseHeaders = true;
+app.UseRequestLocalization(localizationOptions);
+
 
 app.Run();

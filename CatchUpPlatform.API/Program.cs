@@ -6,12 +6,19 @@ using CatchUpPlatform.API.News.Infrastructure.Persistence.EntityFrameworkCore.Re
 using CatchUpPlatform.API.Shared.Domain.Repositories;
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using CatchUpPlatform.API.Shared.Interfaces.ASP.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Lowercase URLs for all endpoints
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 // Localization configuration
 builder.Services.AddLocalization();
+
+// Configure Kebab Case Route Naming Convention
+builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
 
 // Configure Database Context and route EF logs through the app logger pipeline.
 builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
@@ -62,5 +69,7 @@ var localizationOptions = new RequestLocalizationOptions()
 localizationOptions.ApplyCurrentCultureToResponseHeaders = true;
 app.UseRequestLocalization(localizationOptions);
 
+
+app.MapControllers();
 
 app.Run();

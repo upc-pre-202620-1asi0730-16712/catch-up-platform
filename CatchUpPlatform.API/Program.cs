@@ -9,6 +9,8 @@ using CatchUpPlatform.API.Shared.Domain.Repositories;
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using CatchUpPlatform.API.Shared.Interfaces.ASP.Configuration;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Scalar.AspNetCore;
@@ -22,7 +24,26 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddLocalization();
 
 // Configure Kebab Case Route Naming Convention
-builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
+builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()))
+    .AddDataAnnotationsLocalization(options =>
+        options.DataAnnotationLocalizerProvider = (type, factory) => factory.Create(typeof(SharedResource)))
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var localizer = context.HttpContext.RequestServices.GetRequiredService<IStringLocalizer<SharedResource>>();
+            var problemDetailsFactory = context.HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
+            var problemDetails = problemDetailsFactory.CreateValidationProblemDetails(
+                context.HttpContext,
+                context.ModelState,
+                statusCode: StatusCodes.Status400BadRequest,
+                title: localizer["InvalidModelStateTitle"].Value);
+            
+            var result = new BadRequestObjectResult(problemDetails);
+            result.ContentTypes.Add("application/problem+json");
+            return result;
+        };
+    });
 
 
 // Register RFC 7807 ProblemDetails payloads for centralized exception handling.

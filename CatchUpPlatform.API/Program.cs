@@ -29,6 +29,8 @@ builder.Services.AddOpenApi(options =>
     options.AddSchemaTransformer(LocalizedOpenApiAssembler.TransformSchemaAsync);
 });
 
+
+// Add Database Connection
 // Configure Database Context and route EF logs through the app logger pipeline.
 builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 {
@@ -58,7 +60,6 @@ builder.Services.AddScoped<IFavoriteSourceRepository, FavoriteSourceRepository>(
 builder.Services.AddScoped<IFavoriteSourceQueryService, FavoriteSourceQueryService>();
 builder.Services.AddScoped<IFavoriteSourceCommandService, FavoriteSourceCommandService>();
 
-
 var app = builder.Build();
 
 // Apply pending migrations on startup
@@ -69,6 +70,9 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
+// Configure the HTTP request pipeline.
+app.UseExceptionHandler();
+
 // Localization must run before Swagger so generated documentation follows the request culture.
 string[] supportedCultures = ["en", "en-US", "es", "es-PE" ];
 var localizationOptions = new RequestLocalizationOptions()
@@ -77,6 +81,10 @@ var localizationOptions = new RequestLocalizationOptions()
     .AddSupportedUICultures(supportedCultures);
 localizationOptions.ApplyCurrentCultureToResponseHeaders = true;
 app.UseRequestLocalization(localizationOptions);
+
+app.UseHttpsRedirection();
+
+//app.UseAuthorization();
 
 // OpenAPI and Scalar are kept available in all environments to preserve the existing API explorer behavior
 app.MapOpenApi();

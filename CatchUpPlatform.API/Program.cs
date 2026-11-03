@@ -3,6 +3,7 @@ using CatchUpPlatform.API.News.Application.Internal.QueryServices;
 using CatchUpPlatform.API.News.Application.Services;
 using CatchUpPlatform.API.News.Domain.Repositories;
 using CatchUpPlatform.API.News.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using CatchUpPlatform.API.News.Interfaces.Rest.Transform;
 using CatchUpPlatform.API.Shared.Domain.Repositories;
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
@@ -22,7 +23,11 @@ builder.Services.AddLocalization();
 builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
 
 // Generate the OpenAPI document with ASP.NET Core's built-in support.
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddOperationTransformer(LocalizedOpenApiAssembler.TransformOperationAsync);
+    options.AddSchemaTransformer(LocalizedOpenApiAssembler.TransformSchemaAsync);
+});
 
 // Configure Database Context and route EF logs through the app logger pipeline.
 builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>

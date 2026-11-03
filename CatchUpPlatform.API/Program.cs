@@ -8,6 +8,7 @@ using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.
 using CatchUpPlatform.API.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using CatchUpPlatform.API.Shared.Interfaces.ASP.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,9 @@ builder.Services.AddLocalization();
 
 // Configure Kebab Case Route Naming Convention
 builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
+
+// Generate the OpenAPI document with ASP.NET Core's built-in support.
+builder.Services.AddOpenApi();
 
 // Configure Database Context and route EF logs through the app logger pipeline.
 builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
@@ -69,7 +73,9 @@ var localizationOptions = new RequestLocalizationOptions()
 localizationOptions.ApplyCurrentCultureToResponseHeaders = true;
 app.UseRequestLocalization(localizationOptions);
 
-
+// OpenAPI and Scalar are kept available in all environments to preserve the existing API explorer behavior
+app.MapOpenApi();
+app.MapScalarApiReference();
 app.MapControllers();
 
 app.Run();
